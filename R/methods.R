@@ -1,5 +1,3 @@
-
-
 setClass("tidyseurat", contains="Seurat")
 
 #' @importFrom methods show
@@ -11,7 +9,6 @@ setMethod(
   definition = function(object) {
 
       object %>%
-      as_tibble() %>%
       print()
     
 
@@ -19,6 +16,8 @@ setMethod(
 )
 
 #' tidy for seurat
+#' 
+#' @name tidy
 #' 
 #' @param object A Seurat object
 #' 
@@ -38,7 +37,6 @@ tidy.Seurat <- function(object){  as(object, "tidyseurat") }
 
 #' Extract and join information for transcripts.
 #'
-#' \lifecycle{experimental}
 #'
 #' @description join_transcripts() extracts and joins information for specified transcripts
 #'
