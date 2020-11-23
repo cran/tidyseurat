@@ -4,6 +4,9 @@ screenshot <- "../man/figures/plotly.png"
 
 # The chunk below uses Rmd in man/fragments to avoid duplication, as the content is shared with the vignette and README. As suggested here: https://www.garrickadenbuie.com/blog/dry-vignette-and-readme/
 
+visual_cue <- "../man/figures/logo_interaction-01.png"
+
+
 ## ---- echo=FALSE, include=FALSE-----------------------------------------------
 library(knitr)
 knitr::opts_chunk$set(warning = FALSE, message = FALSE)
@@ -46,11 +49,7 @@ pbmc_small_polished %>%
 
 ## -----------------------------------------------------------------------------
 # Use colourblind-friendly colours
-if (requireNamespace("dittoSeq", quietly = TRUE)) {
-      friendly_cols <- dittoSeq::dittoColors()
-   } else {
-      friendly_cols <- c("red", "blue", "green", "purple")
-   }
+friendly_cols <- c("#88CCEE", "#CC6677", "#DDCC77", "#117733", "#332288", "#AA4499", "#44AA99", "#999933", "#882255", "#661100", "#6699CC")
 
 # Set theme
 my_theme <-
@@ -252,41 +251,6 @@ pbmc_small_nested_reanalysed %>%
   geom_point() +
   facet_wrap(~cell_class) +
   my_theme
-
-## ---- eval = FALSE------------------------------------------------------------
-#  library(SingleCellSignalR)
-#  
-#  pbmc_small_nested_interactions <-
-#    pbmc_small_nested_reanalysed %>%
-#  
-#    # Unnest based on cell category
-#    unnest(data) %>%
-#  
-#    # Create unambiguous clusters
-#    mutate(integrated_clusters = first.labels %>% as.factor() %>% as.integer()) %>%
-#  
-#    # Nest based on sample
-#    tidyseurat::nest(data = -sample) %>%
-#    tidyseurat::mutate(interactions = map(data, ~ {
-#  
-#      # Produce variables. Yuck!
-#      cluster <- .x@meta.data$integrated_clusters
-#      data <- data.frame(.x[["SCT"]]@data)
-#  
-#      # Ligand/Receptor analysis using SingleCellSignalR
-#      data %>%
-#        cell_signaling(genes = rownames(data), cluster = cluster) %>%
-#        inter_network(data = data, signal = ., genes = rownames(data), cluster = cluster) %$%
-#        `individual-networks` %>%
-#        map_dfr(~ bind_rows(as_tibble(.x)))
-#    }))
-#  
-#  pbmc_small_nested_interactions %>%
-#    select(-data) %>%
-#    unnest(interactions)
-
-## ---- echo = FALSE------------------------------------------------------------
-tidyseurat::pbmc_small_nested_interactions
 
 ## -----------------------------------------------------------------------------
 sessionInfo()
