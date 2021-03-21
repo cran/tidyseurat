@@ -9,7 +9,8 @@ join_transcripts(
   transcripts = NULL,
   all = FALSE,
   exclude_zeros = FALSE,
-  shape = "long"
+  shape = "long",
+  ...
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ join_transcripts(
 \item{exclude_zeros}{If TRUE exclude zero values}
 
 \item{shape}{Format of the returned table "long" or "wide"}
+
+\item{...}{Parameters to pass to join wide, i.e. assay name to extract transcript abundance from}
 }
 \value{
 A `tbl` containing the information.for the specified transcripts
@@ -35,7 +38,7 @@ This function extracts information for specified transcripts and returns the inf
 \examples{
 
 pbmc_small \%>\% 
-tidy \%>\% 
+ 
 join_transcripts(transcripts = c("HLA-DRA", "LYZ"))
 
 

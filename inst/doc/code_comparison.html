@@ -201,170 +201,124 @@ hr {
 </head>
 
 <body>
-<!-- badges: start -->
+<p>Just as a quick example, we show how to filter cells based on sample size (number of cells) and UMAP location. You can imagine a similar example with more meaningful criteria.</p>
 
-<p><a href="https://lifecycle.r-lib.org/articles/stages.html"><img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="Lifecycle:maturing"/></a></p>
+<p>tidyseurat</p>
 
-<!-- badges: end -->
-
-<pre><code class="r"># Article workflow
-
-library(tidyverse)
-library(Seurat)
-library(SingleR)
-library(plotly)
-library(tidyHeatmap)
-library(ggalluvial)
-library(ggplot2)
-library(tidyseurat)
-options(future.globals.maxSize = 50068 * 1024^2)
-
-# Use colourblind-friendly colours
-friendly_cols &lt;- dittoSeq::dittoColors()
-
-# Set theme
-custom_theme &lt;-
-  list(
-    scale_fill_manual(values = friendly_cols),
-    scale_color_manual(values = friendly_cols),
-    theme_bw() +
-      theme(
-        panel.border = element_blank(),
-        axis.line = element_line(),
-        panel.grid.major = element_line(size = 0.2),
-        panel.grid.minor = element_line(size = 0.1),
-        text = element_text(size = 9),
-        legend.position = &quot;bottom&quot;,
-        strip.background = element_blank(),
-        axis.title.x = element_text(margin = margin(t = 10, r = 10, b = 10, l = 10)),
-        axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 10)),
-        axis.text.x = element_text(angle = 30, hjust = 1, vjust = 1)
-      )
-  )
-
-PBMC_clean_scaled_UMAP_cluster_cell_type &lt;- readRDS(&quot;dev/PBMC_clean_scaled_UMAP_cluster_cell_type.rds&quot;)
+<pre><code class="r">library(dplyr)
 </code></pre>
 
-<pre><code class="r">p1 = 
-  PBMC_clean_scaled_UMAP_cluster_cell_type %&gt;%
-  pivot_longer(
-    c(mito.fraction, S.Score, G2M.Score), 
-    names_to=&quot;property&quot;, 
-    values_to=&quot;Value&quot;
-  ) %&gt;%
-  mutate(property =  factor(property, levels = c(&quot;mito.fraction&quot;, &quot;G2M.Score&quot;, &quot;S.Score&quot;))) %&gt;%
-  ggplot(aes(sample, Value)) + 
-  geom_boxplot(outlier.size = 0.5 ) + 
-  facet_wrap(~property, scales = &quot;free_y&quot; ) +
-  custom_theme +
-  theme(aspect.ratio=1)
+<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 4.0.3
 </code></pre>
 
-<pre><code class="r">p2 = 
-  PBMC_clean_scaled_UMAP_cluster_cell_type %&gt;%
-  sample_n(20000) %&gt;%
-  ggplot(aes(UMAP_1, UMAP_2, color=seurat_clusters)) +
-  geom_point(size=0.05, alpha=0.2) +
-  custom_theme +
-  theme(aspect.ratio=1)
-
-PBMC_clean_scaled_UMAP_cluster_cell_type %&gt;%
-  sample_n(20000) %&gt;%
-  plot_ly(
-    x = ~`UMAP_1`,
-    y = ~`UMAP_2`,
-    z = ~`UMAP_3`,
-    color = ~seurat_clusters,
-    colors = friendly_cols[1:24],sizes = 50, size = 1
-  )
-
-markers = readRDS(&quot;dev/PBMC_marker_df.rds&quot;)
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;
 </code></pre>
 
-<pre><code class="r">p3 = 
-  PBMC_clean_scaled_UMAP_cluster_cell_type %&gt;%
-  arrange(first.labels) %&gt;%
-  mutate(seurat_clusters = fct_inorder(seurat_clusters)) %&gt;%
-  join_transcripts(transcripts=c(&quot;CD3D&quot;, &quot;HLA-DRB1&quot;)) %&gt;%
-  ggplot(aes(y=seurat_clusters , x=abundance_SCT, fill=first.labels)) +
-  geom_density_ridges(bandwidth = 0.2) +
-  facet_wrap(~transcript, nrow = 2) +
-  coord_flip() +
-  custom_theme
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag
 </code></pre>
 
-<pre><code class="r"># Plot heatmap
-p4 = 
-  PBMC_clean_scaled_UMAP_cluster_cell_type %&gt;%
-  sample_n(2000) %&gt;%
-  DoHeatmap(
-    features = markers$gene,
-    group.colors = friendly_cols
-  )
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union
 </code></pre>
 
-<pre><code class="r">p5 = 
-  PBMC_clean_scaled_UMAP_cluster_cell_type %&gt;%
-  sample_n(1000) %&gt;%
-  join_transcripts(transcripts=markers$gene) %&gt;%
-  mutate(seurat_clusters = as.integer(seurat_clusters)) %&gt;%
-  filter(seurat_clusters&lt;10) %&gt;%
-  group_by(seurat_clusters) %&gt;%
-
-  # Plot heatmap
-  heatmap(
-    .row = transcript,
-    .column = cell, 
-    .value = abundance_SCT, 
-    palette_grouping = list(rep(&quot;black&quot;,9)), 
-    palette_value = circlize::colorRamp2(c(-1.5, 0, 1.5), c(&quot;purple&quot;, &quot;black&quot;, &quot;yellow&quot;)),
-
-    # ComplexHeatmap parameters
-    row_gap = unit(0.1, &quot;mm&quot;), column_gap = unit(0.1, &quot;mm&quot;)
-  ) %&gt;%
-
-  # Add annotation
-  add_tile(sample, palette = friendly_cols[1:7]) %&gt;%
-  add_point(PC_1) 
+<pre><code class="r">library(Seurat)
 </code></pre>
 
-<pre><code class="r">p6 = 
-  PBMC_clean_scaled_UMAP_cluster_cell_type %&gt;%
-  tidyseurat::unite(&quot;cluster_cell_type&quot;, c(first.labels, seurat_clusters), remove=FALSE) %&gt;%
-  pivot_longer(
-    c(seurat_clusters, first.labels_single),
-    names_to = &quot;classification&quot;, values_to = &quot;value&quot;
-  ) %&gt;%
+<pre><code>## Warning: package &#39;Seurat&#39; was built under R version 4.0.3
+</code></pre>
 
-  ggplot(aes(x = classification, stratum = value, alluvium = cell,
-           fill = first.labels, label = value)) +
-  scale_x_discrete(expand = c(1, 1)) +
-  geom_flow() +
-  geom_stratum(alpha = .5) +
-  # geom_text(stat = &quot;stratum&quot;, size = 3) +
-  geom_text_repel(stat = &quot;stratum&quot;, size = 3,
-             nudge_x      = 0.05,
-             direction    = &quot;y&quot;,
-             angle        = 0,
-             vjust        = 0,
-             segment.size = 0.2
-         ) +
-  scale_fill_manual(values = friendly_cols) +
-  #guides(fill = FALSE) +
-  coord_flip() +
-  theme_bw() +
-  theme(
-    panel.border = element_blank(),
-    axis.line = element_line(),
-    panel.grid.major = element_line(size = 0.2),
-    panel.grid.minor = element_line(size = 0.1),
-    text = element_text(size = 9),
-    legend.position = &quot;bottom&quot;,
-    strip.background = element_blank(),
-    axis.title.x = element_text(margin = margin(t = 10, r = 10, b = 10, l = 10)),
-    axis.title.y = element_text(margin = margin(t = 10, r = 10, b = 10, l = 10)),
-    axis.text.x = element_text(angle = 30, hjust = 1, vjust = 1)
-  )
+<pre><code>## Attaching SeuratObject
+</code></pre>
+
+<pre><code class="r">library(tidyseurat)
+</code></pre>
+
+<pre><code>## Registered S3 method overwritten by &#39;cli&#39;:
+##   method     from    
+##   print.boxx spatstat
+</code></pre>
+
+<pre><code>## 
+## Attaching package: &#39;tidyseurat&#39;
+</code></pre>
+
+<pre><code>## The following object is masked from &#39;package:SeuratObject&#39;:
+## 
+##     pbmc_small
+</code></pre>
+
+<pre><code>## The following objects are masked from &#39;package:dplyr&#39;:
+## 
+##     add_count, bind_cols, bind_rows, count
+</code></pre>
+
+<pre><code>## The following object is masked from &#39;package:stats&#39;:
+## 
+##     filter
+</code></pre>
+
+<pre><code class="r">tidy_object = pbmc_small %&gt;% tidy()
+</code></pre>
+
+<pre><code>## Warning: `tidy()` was deprecated in tidyseurat 0.2.0.
+## tidyseurat says: tidy() is not needed anymore.
+</code></pre>
+
+<pre><code class="r">seurat_object = pbmc_small
+</code></pre>
+
+<pre><code class="r">tidy_object %&gt;%
+  add_count(file) %&gt;%
+  filter(PC_1 &gt; 0 &amp; n &gt; 40)
+</code></pre>
+
+<pre><code>## Warning: The `.drop` argument of `add_count()` is deprecated as of dplyr 1.0.0.
+</code></pre>
+
+<pre><code>## # A Seurat-tibble abstraction: 5 x 17
+## [90m# Transcripts=230 | Active assay=RNA | Assays=RNA[39m
+##   cell  orig.ident nCount_RNA nFeature_RNA RNA_snn_res.0.8 letter.idents groups
+##   &lt;chr&gt; &lt;fct&gt;           &lt;dbl&gt;        &lt;int&gt; &lt;fct&gt;           &lt;fct&gt;         &lt;chr&gt; 
+## 1 GGCA… SeuratPro…        172           29 0               A             g1    
+## 2 TTAC… SeuratPro…        228           39 0               A             g1    
+## 3 GAGT… SeuratPro…        527           47 0               A             g1    
+## 4 AGTC… SeuratPro…        157           29 0               A             g1    
+## 5 CTTG… SeuratPro…        233           76 1               B             g1    
+## # … with 10 more variables: RNA_snn_res.1 &lt;fct&gt;, file &lt;chr&gt;, n &lt;int&gt;,
+## #   PC_1 &lt;dbl&gt;, PC_2 &lt;dbl&gt;, PC_3 &lt;dbl&gt;, PC_4 &lt;dbl&gt;, PC_5 &lt;dbl&gt;, tSNE_1 &lt;dbl&gt;,
+## #   tSNE_2 &lt;dbl&gt;
+</code></pre>
+
+<p>Seurat</p>
+
+<pre><code class="r">pca_emb = Embeddings(object = seurat_object, reduction = &quot;pca&quot;)
+cell_pca = rownames(pca_emb[pca_emb[,1]&gt;0,])
+n =
+  seurat_object@meta.data %&gt;%
+  add_count(file) %&gt;%
+  pull(n)
+seurat_object = AddMetaData( object = seurat_object, metadata = n, col.name = &#39;n&#39;)
+seurat_object %&gt;%
+  subset(cells = cell_pca) %&gt;%
+  subset( n &lt; 40)
+</code></pre>
+
+<pre><code>## # A Seurat-tibble abstraction: 5 x 17
+## [90m# Transcripts=230 | Active assay=RNA | Assays=RNA[39m
+##   cell  orig.ident nCount_RNA nFeature_RNA RNA_snn_res.0.8 letter.idents groups
+##   &lt;chr&gt; &lt;fct&gt;           &lt;dbl&gt;        &lt;int&gt; &lt;fct&gt;           &lt;fct&gt;         &lt;chr&gt; 
+## 1 ATTC… SeuratPro…        212           38 0               A             g2    
+## 2 ATCA… SeuratPro…        168           37 0               A             g2    
+## 3 GTCA… SeuratPro…        210           33 0               A             g2    
+## 4 GACG… SeuratPro…        202           30 0               A             g2    
+## 5 GGAA… SeuratPro…        150           30 0               A             g2    
+## # … with 10 more variables: RNA_snn_res.1 &lt;fct&gt;, file &lt;chr&gt;, n &lt;int&gt;,
+## #   PC_1 &lt;dbl&gt;, PC_2 &lt;dbl&gt;, PC_3 &lt;dbl&gt;, PC_4 &lt;dbl&gt;, PC_5 &lt;dbl&gt;, tSNE_1 &lt;dbl&gt;,
+## #   tSNE_2 &lt;dbl&gt;
 </code></pre>
 
 </body>

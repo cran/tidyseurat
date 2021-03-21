@@ -1,6 +1,6 @@
 context('tidyr test')
 
-tt = pbmc_small@assays$RNA@counts %>% CreateSeuratObject() %>% tidy %>% mutate(groups = sprintf("g%s", rep(1:2, dplyr::n()/2)))
+tt = pbmc_small@assays$RNA@counts %>% CreateSeuratObject() %>% mutate(groups = sprintf("g%s", rep(1:2, dplyr::n()/2)))
 
 test_that("nest_unnest",{
   
@@ -17,6 +17,16 @@ test_that("nest_unnest",{
   
   
 })
+
+test_that("nest_unnest_slice_1",{
+  
+  tt %>%
+    nest(data = -groups) %>% 
+    slice(1) %>% 
+    unnest(data)
+  
+})
+
 
 test_that("unite separate",{
   

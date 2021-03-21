@@ -27,22 +27,22 @@ library(Seurat)
 library(tidyseurat)
 
 ## -----------------------------------------------------------------------------
-pbmc_small_tidy <- tidyseurat::pbmc_small %>% tidy()
+pbmc_small <- tidyseurat::pbmc_small
 
 ## -----------------------------------------------------------------------------
-pbmc_small_tidy
+pbmc_small
 
 ## -----------------------------------------------------------------------------
-pbmc_small_tidy@assays
+pbmc_small@assays
 
 ## -----------------------------------------------------------------------------
-pbmc_small_tidy$file[1:5]
+pbmc_small$file[1:5]
 
 ## -----------------------------------------------------------------------------
 # Create sample column
 pbmc_small_polished <-
-  pbmc_small_tidy %>%
-  extract(file, "sample", "../data/([a-z0-9]+)/outs.+", remove = FALSE)
+  pbmc_small %>%
+  tidyseurat::extract(file, "sample", "../data/([a-z0-9]+)/outs.+", remove = FALSE)
 # Reorder to have sample column up front
 pbmc_small_polished %>%
   select(sample, everything())
@@ -121,13 +121,28 @@ pbmc_small_cluster
 pbmc_small_cluster %>%
   tidyseurat::count(groups, seurat_clusters)
 
-## -----------------------------------------------------------------------------
+## ----markers_v3, eval=(packageVersion("Seurat") < package_version("4.0.0"))----
+#  # Identify top 10 markers per cluster
+#  markers <-
+#    pbmc_small_cluster %>%
+#    FindAllMarkers(only.pos = TRUE, min.pct = 0.25, thresh.use = 0.25) %>%
+#    group_by(cluster) %>%
+#    top_n(10, avg_logFC)
+#  
+#  # Plot heatmap
+#  pbmc_small_cluster %>%
+#    DoHeatmap(
+#      features = markers$gene,
+#      group.colors = friendly_cols
+#    )
+
+## ----markers_v4, eval=(packageVersion("Seurat") >= package_version("4.0.0"))----
 # Identify top 10 markers per cluster
 markers <-
   pbmc_small_cluster %>%
   FindAllMarkers(only.pos = TRUE, min.pct = 0.25, thresh.use = 0.25) %>%
   group_by(cluster) %>%
-  top_n(10, avg_logFC)
+  top_n(10, avg_log2FC)
 
 # Plot heatmap
 pbmc_small_cluster %>%

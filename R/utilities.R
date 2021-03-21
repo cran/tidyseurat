@@ -68,20 +68,24 @@ drop_class = function(var, name) {
 #' 
 #' @importFrom magrittr "%$%"
 #' @importFrom utils tail
+#' @importFrom Seurat GetAssayData
 #' 
 #' @param .data A tidyseurat
 #' @param transcripts A character
 #' @param all A boolean
+#' @param ... Parameters to pass to join wide, i.e. assay name to extract transcript abundance from
 #' 
 #' 
-#' @return A tidyseurat object
+#' @return A Seurat object
 #' 
 #'
 #' @export
-get_abundance_sc_wide = function(.data, transcripts = NULL, all = FALSE){
+get_abundance_sc_wide = function(.data, transcripts = NULL, all = FALSE, assay = .data@active.assay, slot = "data"){
   
   # Solve CRAN warnings
   . = NULL
+  assays = NULL
+  counts = NULL
   
   # Check if output would be too big without forcing
   if(
@@ -108,14 +112,14 @@ get_abundance_sc_wide = function(.data, transcripts = NULL, all = FALSE){
   else variable_genes = NULL
   
   # Just grub last assay
-  .data@assays %>%
-    tail(1) %>%
-    .[[1]] %>%
+  .data %>%
     when(
-      variable_genes %>% is.null %>% `!` ~ (.)@counts[variable_genes,, drop=FALSE],
-      transcripts %>% is.null %>% `!` ~ (.)@counts[transcripts,, drop=FALSE],
+      variable_genes %>% is.null %>% `!` ~ (.)[variable_genes,],
+      transcripts %>% is.null %>% `!` ~ (.)[transcripts,],
       ~ stop("It is not convenient to extract all genes, you should have either variable features or transcript list to extract")
     ) %>%
+    .[[assay]] %>%
+    GetAssayData(slot=slot) %>%
     as.matrix() %>%
     t %>%
     as_tibble(rownames = "cell") 
@@ -138,7 +142,7 @@ get_abundance_sc_wide = function(.data, transcripts = NULL, all = FALSE){
 #' @param all A boolean
 #' @param exclude_zeros A boolean
 #' 
-#' @return A tidyseurat object
+#' @return A Seurat object
 #'
 #' @export
 get_abundance_sc_long = function(.data, transcripts = NULL, all = FALSE, exclude_zeros = FALSE){
@@ -203,7 +207,7 @@ get_abundance_sc_long = function(.data, transcripts = NULL, all = FALSE, exclude
          
          
     ) %>%
-    Reduce(function(...) left_join(..., by=c("transcript", "cell")), .)
+    Reduce(function(...) full_join(..., by=c("transcript", "cell")), .)
   
 }
 
@@ -241,9 +245,9 @@ get_special_columns = function(seurat_object){
     as.character 
 }
 
-get_special_datasets = function(seurat_object){
+get_special_datasets = function(seurat_object, n_dimensions_to_return = Inf){
   seurat_object@reductions %>%
-    map(~ .x@cell.embeddings[,1:min(5, ncol(.x@cell.embeddings)), drop=FALSE] )
+    map(~ .x@cell.embeddings[,1:min(n_dimensions_to_return, ncol(.x@cell.embeddings)), drop=FALSE] )
   
 }
 

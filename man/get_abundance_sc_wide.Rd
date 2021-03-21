@@ -4,7 +4,13 @@
 \alias{get_abundance_sc_wide}
 \title{get abundance long}
 \usage{
-get_abundance_sc_wide(.data, transcripts = NULL, all = FALSE)
+get_abundance_sc_wide(
+  .data,
+  transcripts = NULL,
+  all = FALSE,
+  assay = .data@active.assay,
+  slot = "data"
+)
 }
 \arguments{
 \item{.data}{A tidyseurat}
@@ -12,9 +18,11 @@ get_abundance_sc_wide(.data, transcripts = NULL, all = FALSE)
 \item{transcripts}{A character}
 
 \item{all}{A boolean}
+
+\item{...}{Parameters to pass to join wide, i.e. assay name to extract transcript abundance from}
 }
 \value{
-A tidyseurat object
+A Seurat object
 }
 \description{
 get abundance long

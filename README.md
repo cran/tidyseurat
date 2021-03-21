@@ -3,7 +3,7 @@ tidyseurat - part of tidytranscriptomics
 
 <!-- badges: start -->
 
-[![Lifecycle:maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+[![Lifecycle:maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html)
 [![R build
 status](https://github.com/stemangiola/tidyseurat/workflows/R-CMD-check/badge.svg)](https://github.com/stemangiola/tidyseurat/actions/)
 <!-- badges: end -->
@@ -83,16 +83,17 @@ This is a seurat object but it is evaluated as tibble. So it is fully
 compatible both with Seurat and tidyverse APIs.
 
 ``` r
-pbmc_small_tidy <- tidyseurat::pbmc_small %>% tidy()
+pbmc_small <- tidyseurat::pbmc_small 
 ```
 
 **It looks like a tibble**
 
 ``` r
-pbmc_small_tidy
+pbmc_small
 ```
 
-    ## # A tibble abstraction: 80 x 16
+    ## # A Seurat-tibble abstraction: 80 x 16
+    ## [90m# Transcripts=230 | Active assay=RNA | Assays=RNA[39m
     ##    cell  orig.ident nCount_RNA nFeature_RNA RNA_snn_res.0.8 letter.idents groups
     ##    <chr> <fct>           <dbl>        <int> <fct>           <fct>         <chr> 
     ##  1 ATGC… SeuratPro…         70           47 0               A             g2    
@@ -112,7 +113,7 @@ pbmc_small_tidy
 **But it is a Seurat object after all**
 
 ``` r
-pbmc_small_tidy@assays
+pbmc_small@assays
 ```
 
     ## $RNA
@@ -123,10 +124,10 @@ pbmc_small_tidy@assays
 # Annotation polishing
 
 We may have a column that contains the directory each run was taken
-from, such as the “file” column in `pbmc_small_tidy`.
+from, such as the “file” column in `pbmc_small`.
 
 ``` r
-pbmc_small_tidy$file[1:5]
+pbmc_small$file[1:5]
 ```
 
     ##                                     ATGCCAGAACGACT 
@@ -147,14 +148,15 @@ into multiple columns using regular expression groups.
 ``` r
 # Create sample column
 pbmc_small_polished <-
-  pbmc_small_tidy %>%
+  pbmc_small
   extract(file, "sample", "../data/([a-z0-9]+)/outs.+", remove = FALSE)
 # Reorder to have sample column up front
 pbmc_small_polished %>%
   select(sample, everything())
 ```
 
-    ## # A tibble abstraction: 80 x 17
+    ## # A Seurat-tibble abstraction: 80 x 17
+    ## [90m# Transcripts=230 | Active assay=RNA | Assays=RNA[39m
     ##    cell  sample orig.ident nCount_RNA nFeature_RNA RNA_snn_res.0.8 letter.idents
     ##    <chr> <chr>  <fct>           <dbl>        <int> <fct>           <fct>        
     ##  1 ATGC… sampl… SeuratPro…         70           47 0               A            
@@ -255,7 +257,8 @@ pbmc_small_pca <-
 pbmc_small_pca
 ```
 
-    ## # A tibble abstraction: 80 x 19
+    ## # A Seurat-tibble abstraction: 80 x 19
+    ## [90m# Transcripts=220 | Active assay=SCT | Assays=RNA, SCT[39m
     ##    cell  orig.ident nCount_RNA nFeature_RNA RNA_snn_res.0.8 letter.idents groups
     ##    <chr> <fct>           <dbl>        <int> <fct>           <fct>         <chr> 
     ##  1 ATGC… SeuratPro…         70           47 0               A             g2    
@@ -298,7 +301,8 @@ pbmc_small_cluster <-
 pbmc_small_cluster
 ```
 
-    ## # A tibble abstraction: 80 x 21
+    ## # A Seurat-tibble abstraction: 80 x 21
+    ## [90m# Transcripts=220 | Active assay=SCT | Assays=RNA, SCT[39m
     ##    cell  orig.ident nCount_RNA nFeature_RNA RNA_snn_res.0.8 letter.idents groups
     ##    <chr> <fct>           <dbl>        <int> <fct>           <fct>         <chr> 
     ##  1 ATGC… SeuratPro…         70           47 0               A             g2    
@@ -338,7 +342,12 @@ pbmc_small_cluster %>%
 
 We can identify cluster markers using Seurat.
 
-``` r
+<!-- If this is Seurat v4, comment out the v3 markers -->
+
+<!--
+
+
+```r
 # Identify top 10 markers per cluster
 markers <-
   pbmc_small_cluster %>%
@@ -354,7 +363,27 @@ pbmc_small_cluster %>%
   )
 ```
 
-![](man/figures/unnamed-chunk-15-1.png)<!-- -->
+-->
+
+<!-- If this is Seurat v3, comment out the v4 markers -->
+
+``` r
+# Identify top 10 markers per cluster
+markers <-
+  pbmc_small_cluster %>%
+  FindAllMarkers(only.pos = TRUE, min.pct = 0.25, thresh.use = 0.25) %>%
+  group_by(cluster) %>%
+  top_n(10, avg_log2FC)
+
+# Plot heatmap
+pbmc_small_cluster %>%
+  DoHeatmap(
+    features = markers$gene,
+    group.colors = friendly_cols
+  )
+```
+
+![](man/figures/markers_v4-1.png)<!-- -->
 
 # Reduce dimensions
 
@@ -416,7 +445,8 @@ pbmc_small_cell_type %>%
   tidyseurat::select(cell, first.labels, everything())
 ```
 
-    ## # A tibble abstraction: 80 x 25
+    ## # A Seurat-tibble abstraction: 80 x 25
+    ## [90m# Transcripts=220 | Active assay=SCT | Assays=RNA, SCT[39m
     ##    cell  first.labels orig.ident nCount_RNA nFeature_RNA RNA_snn_res.0.8
     ##    <chr> <chr>        <fct>           <dbl>        <int> <fct>          
     ##  1 ATGC… CD4+ T-cells SeuratPro…         70           47 0              
@@ -476,7 +506,7 @@ pbmc_small_cell_type %>%
   my_theme
 ```
 
-![](man/figures/unnamed-chunk-19-1.png)<!-- -->
+![](man/figures/unnamed-chunk-18-1.png)<!-- -->
 
 We can easily plot gene correlation per cell category, adding
 multi-layer annotations.
@@ -497,7 +527,7 @@ pbmc_small_cell_type %>%
   my_theme
 ```
 
-![](man/figures/unnamed-chunk-20-1.png)<!-- -->
+![](man/figures/unnamed-chunk-19-1.png)<!-- -->
 
 # Nested analyses
 
@@ -566,4 +596,4 @@ pbmc_small_nested_reanalysed %>%
   my_theme
 ```
 
-![](man/figures/unnamed-chunk-23-1.png)<!-- -->
+![](man/figures/unnamed-chunk-22-1.png)<!-- -->
