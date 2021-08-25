@@ -6,20 +6,21 @@
 \usage{
 get_abundance_sc_wide(
   .data,
-  transcripts = NULL,
+  features = NULL,
   all = FALSE,
   assay = .data@active.assay,
-  slot = "data"
+  slot = "data",
+  prefix = ""
 )
 }
 \arguments{
 \item{.data}{A tidyseurat}
 
-\item{transcripts}{A character}
+\item{features}{A character}
 
 \item{all}{A boolean}
 
-\item{...}{Parameters to pass to join wide, i.e. assay name to extract transcript abundance from}
+\item{...}{Parameters to pass to join wide, i.e. assay name to extract feature abundance from}
 }
 \value{
 A Seurat object

@@ -285,10 +285,10 @@ markers = readRDS(&quot;dev/PBMC_marker_df.rds&quot;)
   PBMC_clean_scaled_UMAP_cluster_cell_type %&gt;%
   arrange(first.labels) %&gt;%
   mutate(seurat_clusters = fct_inorder(seurat_clusters)) %&gt;%
-  join_transcripts(transcripts=c(&quot;CD3D&quot;, &quot;HLA-DRB1&quot;)) %&gt;%
+  join_features(features=c(&quot;CD3D&quot;, &quot;HLA-DRB1&quot;)) %&gt;%
   ggplot(aes(y=seurat_clusters , x=abundance_SCT, fill=first.labels)) +
   geom_density_ridges(bandwidth = 0.2) +
-  facet_wrap(~transcript, nrow = 2) +
+  facet_wrap(~feature, nrow = 2) +
   coord_flip() +
   custom_theme
 </code></pre>
@@ -306,14 +306,14 @@ p4 =
 <pre><code class="r">p5 = 
   PBMC_clean_scaled_UMAP_cluster_cell_type %&gt;%
   sample_n(1000) %&gt;%
-  join_transcripts(transcripts=markers$gene) %&gt;%
+  join_features(features=markers$gene) %&gt;%
   mutate(seurat_clusters = as.integer(seurat_clusters)) %&gt;%
   filter(seurat_clusters&lt;10) %&gt;%
   group_by(seurat_clusters) %&gt;%
 
   # Plot heatmap
   heatmap(
-    .row = transcript,
+    .row = feature,
     .column = cell, 
     .value = abundance_SCT, 
     palette_grouping = list(rep(&quot;black&quot;,9)), 

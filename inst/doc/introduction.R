@@ -27,25 +27,13 @@ library(Seurat)
 library(tidyseurat)
 
 ## -----------------------------------------------------------------------------
-pbmc_small <- tidyseurat::pbmc_small
+data("pbmc_small")
 
 ## -----------------------------------------------------------------------------
 pbmc_small
 
 ## -----------------------------------------------------------------------------
 pbmc_small@assays
-
-## -----------------------------------------------------------------------------
-pbmc_small$file[1:5]
-
-## -----------------------------------------------------------------------------
-# Create sample column
-pbmc_small_polished <-
-  pbmc_small %>%
-  tidyseurat::extract(file, "sample", "../data/([a-z0-9]+)/outs.+", remove = FALSE)
-# Reorder to have sample column up front
-pbmc_small_polished %>%
-  select(sample, everything())
 
 ## -----------------------------------------------------------------------------
 # Use colourblind-friendly colours
@@ -72,21 +60,21 @@ my_theme <-
   )
 
 ## ----plot1--------------------------------------------------------------------
-pbmc_small_polished %>%
+pbmc_small %>%
   tidyseurat::ggplot(aes(nFeature_RNA, fill = groups)) +
   geom_histogram() +
   my_theme
 
 ## ----plot2--------------------------------------------------------------------
-pbmc_small_polished %>%
+pbmc_small %>%
   tidyseurat::ggplot(aes(groups, nCount_RNA, fill = groups)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(width = 0.1) +
   my_theme
 
 ## -----------------------------------------------------------------------------
-pbmc_small_polished %>%
-  join_transcripts(transcripts = c("HLA-DRA", "LYZ")) %>%
+pbmc_small %>%
+  join_features(features = c("HLA-DRA", "LYZ")) %>%
   ggplot(aes(groups, abundance_RNA + 1, fill = groups)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(aes(size = nCount_RNA), alpha = 0.5, width = 0.2) +
@@ -95,7 +83,7 @@ pbmc_small_polished %>%
 
 ## ----preprocess---------------------------------------------------------------
 pbmc_small_pca <-
-  pbmc_small_polished %>%
+  pbmc_small %>%
   SCTransform(verbose = FALSE) %>%
   FindVariableFeatures(verbose = FALSE) %>%
   RunPCA(verbose = FALSE)
@@ -172,7 +160,7 @@ pbmc_small_UMAP <-
 #  
 #  # Infer cell identities
 #  cell_type_df <-
-#    pbmc_small_UMAP@assays[["SCT"]]@counts %>%
+#    GetAssayData(pbmc_small_UMAP, slot = 'counts', assay = "SCT") %>%
 #    log1p() %>%
 #    Matrix::Matrix(sparse = TRUE) %>%
 #    SingleR::SingleR(
@@ -220,7 +208,7 @@ pbmc_small_cell_type %>%
   mutate(mitochondrial = rnorm(n())) %>%
 
   # Plot correlation
-  join_transcripts(transcripts = c("CST3", "LYZ"), shape = "wide") %>%
+  join_features(features = c("CST3", "LYZ"), shape = "wide") %>%
   ggplot(aes(CST3 + 1, LYZ + 1, color = groups, size = mitochondrial)) +
   geom_point() +
   facet_wrap(~first.labels, scales = "free") +

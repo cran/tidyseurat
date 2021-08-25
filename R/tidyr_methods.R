@@ -41,6 +41,7 @@
 #' @examples
 #'
 #' library(dplyr)
+#' data("pbmc_small")
 #' pbmc_small %>%  nest(data = -groups) %>% unnest(data) 
 #' 
 #'
@@ -68,7 +69,7 @@ unnest.tidyseurat_nested <- function(
     when(
       
       # If my only column to unnest is tidyseurat
-      pull(., !!cols) %>% .[[1]] %>% class %>% as.character() %>% eq("Seurat") %>% any ~  
+      pull(., !!cols) %>% .[[1]] %>% is("Seurat") %>% any ~  
       {
         # Do my trick to unnest
         list_seurat = 
@@ -114,6 +115,7 @@ unnest.tidyseurat_nested <- function(
 #' @examples
 #'
 #' library(dplyr)
+#' data("pbmc_small")
 #' pbmc_small %>%  nest(data = -groups) %>% unnest(data) 
 #' 
 #' @rdname tidyr-methods
@@ -145,7 +147,7 @@ nest.Seurat <- function (.data, ..., .names_sep = NULL)
           
           # Subset cells
           filter(cell %in% .x$cell) %>%
-          
+        
           # Subset columns
           select(colnames(.x))
       )) %>%
@@ -154,6 +156,7 @@ nest.Seurat <- function (.data, ..., .names_sep = NULL)
     add_class("tidyseurat_nested")
   
 }
+
 
 #' Extract a character column into multiple columns using regular
 #' expression groups
@@ -187,6 +190,7 @@ nest.Seurat <- function (.data, ..., .names_sep = NULL)
 #' @export
 #' @examples
 #' 
+#' data("pbmc_small")
 #' pbmc_small %>%  extract(groups, into = "g", regex = "g([0-9])", convert = TRUE)
 #' 
 #' @return A Seurat object or a tibble depending on input
@@ -303,6 +307,7 @@ extract.Seurat <- function  (data, col, into, regex = "([[:alnum:]]+)", remove =
 #' # See vignette("pivot") for examples and explanation
 #' 
 #' library(dplyr)
+#' data("pbmc_small")
 #' pbmc_small %>%  pivot_longer(c(orig.ident, groups), names_to = "name", values_to = "value") 
 #' 
 NULL
@@ -376,6 +381,7 @@ pivot_longer.Seurat <- function(data,
 #' @export
 #' @examples
 #' 
+#' data("pbmc_small")
 #' pbmc_small %>%  unite("new_col", c(orig.ident, groups)) 
 #' 
 #' 
@@ -441,6 +447,7 @@ unite.Seurat <- function(data, col, ..., sep = "_", remove = TRUE, na.rm = FALSE
 #' @export
 #' @examples
 #' 
+#' data("pbmc_small")
 #'  un = pbmc_small %>%  unite("new_col", c(orig.ident, groups)) 
 #'  un %>% separate(col = new_col, into= c("orig.ident", "groups"))
 #' 
