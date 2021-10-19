@@ -1,7 +1,7 @@
 Type: Package
 Package: tidyseurat
 Title: Brings Seurat to the Tidyverse
-Version: 0.2.7
+Version: 0.3.0
 Authors@R: c(person("Stefano", "Mangiola", email = "mangiolastefano@gmail.com",
                   role = c("aut", "cre")),
             person("Maria", "Doyle", email = "Maria.Doyle@petermac.org",
@@ -10,8 +10,8 @@ Authors@R: c(person("Stefano", "Mangiola", email = "mangiolastefano@gmail.com",
 Description: It creates an invisible layer that allow to see the 'Seurat' object 
     as tibble and interact seamlessly with the tidyverse.
 License: GPL-3
-Depends: R (>= 4.0.0), Seurat, SeuratObject
-Imports: tibble, dplyr, magrittr, tidyr, ggplot2, rlang, purrr,
+Depends: R (>= 4.0.0), SeuratObject
+Imports: Seurat, tibble, dplyr, magrittr, tidyr, ggplot2, rlang, purrr,
         lifecycle, methods, plotly, tidyselect, utils, ellipsis,
         pillar, stringr, cli, fansi
 Suggests: testthat, knitr, GGally, markdown, SingleR
@@ -27,9 +27,9 @@ RoxygenNote: 7.1.1
 URL: https://github.com/stemangiola/tidyseurat
 BugReports: https://github.com/stemangiola/tidyseurat/issues
 NeedsCompilation: no
-Packaged: 2021-08-19 00:39:13 UTC; mangiola.s
+Packaged: 2021-10-19 00:04:16 UTC; mangiola.s
 Author: Stefano Mangiola [aut, cre],
   Maria Doyle [ctb]
 Maintainer: Stefano Mangiola <mangiolastefano@gmail.com>
 Repository: CRAN
-Date/Publication: 2021-08-25 11:30:02 UTC
+Date/Publication: 2021-10-19 04:50:02 UTC
