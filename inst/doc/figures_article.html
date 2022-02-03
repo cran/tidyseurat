@@ -286,9 +286,9 @@ markers = readRDS(&quot;dev/PBMC_marker_df.rds&quot;)
   arrange(first.labels) %&gt;%
   mutate(seurat_clusters = fct_inorder(seurat_clusters)) %&gt;%
   join_features(features=c(&quot;CD3D&quot;, &quot;HLA-DRB1&quot;)) %&gt;%
-  ggplot(aes(y=seurat_clusters , x=abundance_SCT, fill=first.labels)) +
+  ggplot(aes(y=seurat_clusters , x=.abundance_SCT, fill=first.labels)) +
   geom_density_ridges(bandwidth = 0.2) +
-  facet_wrap(~feature, nrow = 2) +
+  facet_wrap(~ .feature, nrow = 2) +
   coord_flip() +
   custom_theme
 </code></pre>
@@ -313,9 +313,9 @@ p4 =
 
   # Plot heatmap
   heatmap(
-    .row = feature,
-    .column = cell, 
-    .value = abundance_SCT, 
+    .row = .feature,
+    .column = .cell, 
+    .value = .abundance_SCT, 
     palette_grouping = list(rep(&quot;black&quot;,9)), 
     palette_value = circlize::colorRamp2(c(-1.5, 0, 1.5), c(&quot;purple&quot;, &quot;black&quot;, &quot;yellow&quot;)),
 

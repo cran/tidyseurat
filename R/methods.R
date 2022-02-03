@@ -60,11 +60,12 @@ setMethod(
 #'
 #' @importFrom rlang enquo
 #' @importFrom magrittr "%>%"
+#' @importFrom ttservice join_features
 #'
 #' @name join_features
 #' @rdname join_features
 #'
-#' @param .data A tidyseurat object
+#' @param .data A Seurat object
 #' @param features A vector of feature identifiers to join
 #' @param all If TRUE return all
 #' @param exclude_zeros If TRUE exclude zero values
@@ -73,7 +74,7 @@ setMethod(
 #'
 #' @details This function extracts information for specified features and returns the information in either long or wide format.
 #'
-#' @return A `tbl` containing the information.for the specified features
+#' @return An object containing the information.for the specified features
 #' 
 #' @examples
 #'
@@ -84,36 +85,26 @@ setMethod(
 #'
 #' @export
 #'
-join_features <- function(.data,
-                              features = NULL,
-                              all = FALSE,
-                              exclude_zeros = FALSE,
-                              shape = "long", ...) {
-  UseMethod("join_features", .data)
-}
-#' @export
-join_features.default <-
-  function(.data,
-           features = NULL,
-           all = FALSE,
-           exclude_zeros = FALSE,
-           shape = "long", ...)
-  {
-    print("tidyseurat says: This function cannot be applied to this object")
-  }
-#' @export
-join_features.Seurat <-
-  function(.data,
-           features = NULL,
-           all = FALSE,
-           exclude_zeros = FALSE,
-           shape = "long", ...)
-  {
-    .data %>%
+NULL
+
+#' join_features
+#'
+#' @docType methods
+#' @rdname join_features
+#'
+#' @return An object containing the information.for the specified features
+#'
+setMethod("join_features", "Seurat",  function(.data,
+                                               features = NULL,
+                                               all = FALSE,
+                                               exclude_zeros = FALSE,
+                                               shape = "long", ...)
+{
+  .data %>%
+    
+    
+    when(
       
-      
-      when(
-        
       # Shape is long
       shape == "long" ~ (.) %>% left_join(
         get_abundance_sc_long(
@@ -122,23 +113,27 @@ join_features.Seurat <-
           all = all,
           exclude_zeros = exclude_zeros
         ),
-        by = "cell"
+        by = c_(.data)$name
       ) %>%
-        select(cell, feature, contains("abundance"), everything()),
+        select(!!c_(.data)$symbol, .feature, contains(".abundance"), everything()),
       
       # Shape if wide
       ~ (.) %>% left_join(
-          get_abundance_sc_wide(
-            .data = .data,
-            features = features,
-            all = all, ...
-          ),
-          by = "cell"
-        ) 
-      )
-      
+        get_abundance_sc_wide(
+          .data = .data,
+          features = features,
+          all = all, ...
+        ),
+        by = c_(.data)$name
+      ) 
+    )
+  
+  
+  
+})
 
-   
-  }
+
+
+
 
 

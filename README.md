@@ -13,6 +13,12 @@ status](https://github.com/stemangiola/tidyseurat/workflows/R-CMD-check/badge.sv
 website:
 [stemangiola.github.io/tidyseurat/](https://stemangiola.github.io/tidyseurat/)
 
+Introductory seminar
+
+<a href="https://www.youtube.com/watch?feature=player_embedded&v=wKnyocRCvW4" target="_blank">
+ <img src="https://img.youtube.com/vi/wKnyocRCvW4/mqdefault.jpg" alt="Watch the video" width="280" height="180" border="10" />
+</a>
+
 Please also have a look at
 
 -   [tidySingleCellExperiment](https://stemangiola.github.io/tidySingleCellExperiment/)
@@ -97,7 +103,7 @@ pbmc_small
 ```
 
     ## # A Seurat-tibble abstraction: 80 x 15
-    ## [90m# Features=230 | Active assay=RNA | Assays=RNA[39m
+    ## [90m# Features=230 | Active assay=RNA | Assays=RNA[39m
     ##    cell  orig.ident nCount_RNA nFeature_RNA RNA_snn_res.0.8 letter.idents groups
     ##    <chr> <fct>           <dbl>        <int> <fct>           <fct>         <chr> 
     ##  1 ATGC… SeuratPro…         70           47 0               A             g2    
@@ -183,7 +189,7 @@ Here we plot abundance of two features for each group.
 ``` r
 pbmc_small %>%
   join_features(features = c("HLA-DRA", "LYZ")) %>%
-  ggplot(aes(groups, abundance_RNA + 1, fill = groups)) +
+  ggplot(aes(groups, .abundance_RNA + 1, fill = groups)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(aes(size = nCount_RNA), alpha = 0.5, width = 0.2) +
   scale_y_log10() +
@@ -208,7 +214,7 @@ pbmc_small_pca
 ```
 
     ## # A Seurat-tibble abstraction: 80 x 17
-    ## [90m# Features=220 | Active assay=SCT | Assays=RNA, SCT[39m
+    ## [90m# Features=220 | Active assay=SCT | Assays=RNA, SCT[39m
     ##    cell  orig.ident nCount_RNA nFeature_RNA RNA_snn_res.0.8 letter.idents groups
     ##    <chr> <fct>           <dbl>        <int> <fct>           <fct>         <chr> 
     ##  1 ATGC… SeuratPro…         70           47 0               A             g2    
@@ -252,7 +258,7 @@ pbmc_small_cluster
 ```
 
     ## # A Seurat-tibble abstraction: 80 x 19
-    ## [90m# Features=220 | Active assay=SCT | Assays=RNA, SCT[39m
+    ## [90m# Features=220 | Active assay=SCT | Assays=RNA, SCT[39m
     ##    cell  orig.ident nCount_RNA nFeature_RNA RNA_snn_res.0.8 letter.idents groups
     ##    <chr> <fct>           <dbl>        <int> <fct>           <fct>         <chr> 
     ##  1 ATGC… SeuratPro…         70           47 0               A             g2    
@@ -394,7 +400,7 @@ pbmc_small_cell_type %>%
 ```
 
     ## # A Seurat-tibble abstraction: 80 x 23
-    ## [90m# Features=220 | Active assay=SCT | Assays=RNA, SCT[39m
+    ## [90m# Features=220 | Active assay=SCT | Assays=RNA, SCT[39m
     ##    cell  first.labels orig.ident nCount_RNA nFeature_RNA RNA_snn_res.0.8
     ##    <chr> <chr>        <fct>           <dbl>        <int> <fct>          
     ##  1 ATGC… CD4+ T-cells SeuratPro…         70           47 0              
