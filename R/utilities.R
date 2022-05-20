@@ -121,11 +121,12 @@ get_abundance_sc_wide = function(.data, features = NULL, all = FALSE, assay = .d
     .data[[i]] = NULL
   } 
   
+  
   # Just grub last assay
   .data %>%
     when(
-      variable_genes %>% is.null %>% `!` ~ (.)[variable_genes,],
-      features %>% is.null %>% `!` ~ (.)[features,],
+      variable_genes %>% is.null %>% `!` ~   (.)[ toupper(rownames(.)) %in% toupper(variable_genes),],
+      features %>% is.null %>% `!` ~  (.)[ toupper(rownames(.)) %in% toupper(features),],
       ~ stop("tidyseurat says: It is not convenient to extract all genes, you should have either variable features or feature list to extract")
     ) %>%
     .[[assay]] %>%
@@ -376,4 +377,20 @@ c_ =  function(x){
   # Check if old deprecated columns are used
   if("cell__" %in% names(x@misc)) cell__ = x@misc$cell__
   return(cell__)
+}
+
+#' Add attribute to abject
+#'
+#' @keywords internal
+#' @noRd
+#'
+#'
+#' @param var A tibble
+#' @param attribute An object
+#' @param name A character name of the attribute
+#'
+#' @return A tibble with an additional attribute
+add_attr = function(var, attribute, name) {
+  attr(var, name) <- attribute
+  var
 }
