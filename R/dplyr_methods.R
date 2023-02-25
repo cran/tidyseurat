@@ -912,6 +912,63 @@ slice.Seurat <- function (.data, ..., .preserve = FALSE)
 
 }
 
+#' @export
+#' 
+#' @rdname dplyr-methods
+#' @name slice_sample 
+#' 
+#' @importFrom dplyr slice_sample
+#' 
+#' @param replace Should sampling be performed with (`TRUE`) or without
+#'   (`FALSE`, the default) replacement.
+#' @param weight_by <[`data-masking`][dplyr_data_masking]> Sampling weights.
+#'   This must evaluate to a vector of non-negative numbers the same length as
+#'   the input. Weights are automatically standardised to sum to 1.
+NULL
+
+#' @export
+slice_sample.Seurat <- function(.data, ..., n = NULL, prop = NULL, by = NULL, weight_by = NULL, replace = FALSE) {
+
+
+  # Solve CRAN NOTES
+  cell = NULL
+  . = NULL
+  
+  lifecycle::signal_superseded("1.0.0", "sample_n()", "slice_sample()")
+  
+  if(!is.null(n))
+    new_meta =
+      .data[[]] %>%  
+      as_tibble(rownames = c_(.data)$name) %>% 
+      dplyr::slice_sample(..., n = n, by = by, weight_by = weight_by, replace = replace)
+  else if(!is.null(prop))
+    new_meta =
+    .data[[]] %>%  
+    as_tibble(rownames = c_(.data)$name) %>% 
+    dplyr::slice_sample(..., prop=prop, by = by, weight_by = weight_by, replace = replace)
+  else
+    stop("tidyseurat says: you should provide `n` or `prop` arguments")
+  
+  count_cells = new_meta %>% select(!!c_(.data)$symbol) %>% count(!!c_(.data)$symbol)
+  
+  # If repeted cells
+  if(count_cells$n %>% max() %>% gt(1)){
+    message("tidyseurat says: When sampling with replacement a data frame is returned for independent data analysis.")
+    .data %>% 
+      as_tibble() %>% 
+      right_join(new_meta %>% select(!!c_(.data)$symbol),  by = c_(.data)$name)
+  }  else{
+    new_obj = subset(.data,   cells = new_meta %>% pull(!!c_(.data)$symbol))
+    new_obj@meta.data = 
+      new_meta %>% 
+      data.frame(row.names=pull(.,!!c_(.data)$symbol), check.names = FALSE) %>%
+      select(- !!c_(.data)$symbol) 
+    new_obj
+  }
+  
+  
+}
+
 #' Subset columns using their names and types
 #'
 #' @description
@@ -1099,13 +1156,15 @@ sample_frac.Seurat <- function(tbl, size = 1, replace = FALSE,
 
 #' Count observations by group
 #'
+#' @importFrom dplyr count
+#'
 #' @description
 #' `count()` lets you quickly count the unique values of one or more variables:
 #' `df %>% count(a, b)` is roughly equivalent to
-#' `df %>% group_by(a, b) %>% summarise(n = n())`.
+#' `df %>% group_by(a, b) %>% summarise(n=n())`.
 #' `count()` is paired with `tally()`, a lower-level helper that is equivalent
-#' to `df %>% summarise(n = n())`. Supply `wt` to perform weighted counts,
-#' switching the summary from `n = n()` to `n = sum(wt)`.
+#' to `df %>% summarise(n=n())`. Supply `wt` to perform weighted counts,
+#' switching the summary from `n=n()` to `n=sum(wt)`.
 #'
 #' `add_count()` are `add_tally()` are equivalents to `count()` and `tally()`
 #' but use `mutate()` instead of `summarise()` so that they add a new column
@@ -1131,30 +1190,18 @@ sample_frac.Seurat <- function(tbl, size = 1, replace = FALSE,
 #' An object of the same type as `.data`. `count()` and `add_count()`
 #' group transiently, so the output has the same groups as the input.
 #' @export
+#'
+#' @rdname dplyr-methods
+#' @name count
+#'
 #' @examples
 #'
-#' `%>%` = magrittr::`%>%`
-#' data("pbmc_small")
-#' pbmc_small %>%  count(groups)
 #'
+#' `%>%` <- magrittr::`%>%`
+#' pbmc_small %>%
 #'
-count <- function(x, ..., wt = NULL, sort = FALSE, name = NULL, .drop = group_by_drop_default(x)) {
-UseMethod("count")
-}
-
-#' @export
-count.default <- function(x, ..., wt = NULL, sort = FALSE, name = NULL, .drop = group_by_drop_default(x)) {
-  if (!missing(...)) {
-    out <- dplyr::group_by(x, ..., .add = TRUE, .drop = .drop)
-  }
-  else {
-    out <- x
-  }
-  out <- dplyr::tally(out, wt = !!enquo(wt), sort = sort, name = name)
-  if (is.data.frame(x)) {
-    out <- dplyr::dplyr_reconstruct(out, x)
-  }
-  out}
+#'     count(groups)
+NULL
 
 #' @export
 count.Seurat <- function(x, ..., wt = NULL, sort = FALSE, name = NULL, .drop = group_by_drop_default(x)) {
@@ -1176,21 +1223,16 @@ count.Seurat <- function(x, ..., wt = NULL, sort = FALSE, name = NULL, .drop = g
 }
 
 #' @export
-#' @rdname count
-add_count <- function(x, ..., wt = NULL, sort = FALSE, name = NULL, .drop = group_by_drop_default(x)) {
-  UseMethod("add_count")
-}
+#'
+#'
+#' @importFrom dplyr add_count
+#'
+#' @name add_count
+#'
+#' @rdname dplyr-methods
+NULL
 
 #' @export
-#' @rdname count
-add_count.default <- function(x, ..., wt = NULL, sort = FALSE, name = NULL, .drop = group_by_drop_default(x)) {
-
-  dplyr::add_count(x=x, ..., wt = !!enquo(wt), sort = sort, name = name, .drop = .drop)
-
-}
-
-#' @export
-#' @rdname count
 add_count.Seurat <- function(x, ..., wt = NULL, sort = FALSE, name = NULL, .drop = group_by_drop_default(x)) {
 
   # Deprecation of special column names

@@ -1,4 +1,4 @@
-tidyseurat - part of tidytranscriptomics
+tidyseurat - part of tidytranscriptomics 
 ================
 
 <!-- badges: start -->
@@ -46,7 +46,7 @@ Seurat-compatible *dplyr*, *tidyr*, *ggplot* and *plotly* functions.
 
 | Seurat-compatible Functions | Description                                            |
 |-----------------------------|--------------------------------------------------------|
-| `all`                       | After all `tidyseurat` is a Seurat object, just better |
+| `all`                       | |
 
 | tidyverse Packages | Description                          |
 |--------------------|--------------------------------------|
