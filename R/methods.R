@@ -68,9 +68,11 @@ setMethod(
 #' @param .data A Seurat object
 #' @param features A vector of feature identifiers to join
 #' @param all If TRUE return all
-#' @param exclude_zeros If TRUE exclude zero values
+#' @param exclude_zeros If TRUE exclude zero values in long format
 #' @param shape Format of the returned table "long" or "wide"
-#' @param ... Parameters to pass to join wide, i.e. assay name to extract feature abundance from and gene prefix, for shape="wide"
+#' @param assay assay name to extract feature abundance
+#' @param slot slot in the assay to extract feature abundance
+#' @param ... the other arguments
 #'
 #' @details This function extracts information for specified features and returns the information in either long or wide format.
 #'
@@ -81,7 +83,6 @@ setMethod(
 #' data("pbmc_small")
 #' pbmc_small %>% 
 #' join_features(features = c("HLA-DRA", "LYZ"))
-#'
 #'
 #' @export
 #'
@@ -98,7 +99,9 @@ setMethod("join_features", "Seurat",  function(.data,
                                                features = NULL,
                                                all = FALSE,
                                                exclude_zeros = FALSE,
-                                               shape = "long", ...)
+                                               shape = "long",
+                                               assay = NULL, 
+                                               slot = "data", ...)
 {
   .data %>%
     
@@ -111,7 +114,9 @@ setMethod("join_features", "Seurat",  function(.data,
           .data = .data,
           features = features,
           all = all,
-          exclude_zeros = exclude_zeros
+          exclude_zeros = exclude_zeros,
+          assay = assay,
+          slot = slot, ...
         ),
         by = c_(.data)$name
       ) %>%
@@ -122,7 +127,9 @@ setMethod("join_features", "Seurat",  function(.data,
         get_abundance_sc_wide(
           .data = .data,
           features = features,
-          all = all, ...
+          all = all,
+          assay = assay,
+          slot = slot, ...
         ),
         by = c_(.data)$name
       ) 
@@ -133,51 +140,31 @@ setMethod("join_features", "Seurat",  function(.data,
 })
 
 
-#' Aggregate cells
-#'
-#' @description Combine cells into groups based on shared variables and aggregate feature counts.
-#'
-#' @importFrom magrittr "%>%"
-#' @importFrom rlang enquo
-#' @importFrom tibble enframe
-#' @importFrom Matrix rowSums
-#' @importFrom purrr map_int
-#' @importFrom ttservice aggregate_cells
-#' 
 #' @name aggregate_cells
 #' @rdname aggregate_cells
-#' 
-#' @param .data A tidySingleCellExperiment object
-#' @param .sample A vector of variables by which cells are aggregated
-#' @param slot The slot to which the function is applied
-#' @param assays The assay to which the function is applied
-#' @param aggregation_function The method of cell-feature value aggregation
-#' 
-#' @return A tibble object
+#' @inherit ttservice::aggregate_cells
+#' @aliases aggregate_cells,Seurat-method
 #' 
 #' @examples 
-#' data("pbmc_small")
+#' data(pbmc_small)
 #' pbmc_small |>
 #'   aggregate_cells(c(groups, letter.idents), assays = "RNA")
 #'
-#' @export
-#'
-NULL
-
-#' aggregate_cells
-#'
+#' @importFrom rlang enquo
+#' @importFrom magrittr "%>%"
+#' @importFrom tibble enframe
+#' @importFrom Matrix rowSums
+#' @importFrom ttservice aggregate_cells
 #' @importFrom dplyr everything
+#' @importFrom purrr map_int
 #' 
-#' @docType methods
-#' @rdname aggregate_cells
-#'
-#' @return An object containing the information.for the specified features
+#' @export
 #'
 setMethod("aggregate_cells", "Seurat",  function(.data,
                                                  .sample = NULL, 
                                                  slot = "data",
                                                  assays = NULL, 
-                                                 aggregation_function = Matrix::rowSums){
+                                                 aggregation_function = Matrix::rowSums, ...){
   # Solve NOTE  
   data = NULL
   .feature = NULL

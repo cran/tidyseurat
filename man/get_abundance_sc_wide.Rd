@@ -2,7 +2,7 @@
 % Please edit documentation in R/utilities.R
 \name{get_abundance_sc_wide}
 \alias{get_abundance_sc_wide}
-\title{get abundance long}
+\title{get abundance wide}
 \usage{
 get_abundance_sc_wide(
   .data,
@@ -20,12 +20,16 @@ get_abundance_sc_wide(
 
 \item{all}{A boolean}
 
-\item{...}{Parameters to pass to join wide, i.e. assay name to extract feature abundance from}
+\item{assay}{assay name to extract feature abundance}
+
+\item{slot}{slot in the assay, e.g. `data` and `scale.data`}
+
+\item{prefix}{prefix for the feature names}
 }
 \value{
 A Seurat object
 }
 \description{
-get abundance long
+get abundance wide
 }
 \keyword{internal}
