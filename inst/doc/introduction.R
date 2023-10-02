@@ -7,14 +7,14 @@ screenshot <- "../man/figures/plotly.png"
 visual_cue <- "../man/figures/logo_interaction-01.png"
 
 
-## ---- echo=FALSE, include=FALSE-----------------------------------------------
+## ----echo=FALSE, include=FALSE------------------------------------------------
 library(knitr)
 knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 
 ## ----eval=FALSE---------------------------------------------------------------
 #  install.packages("tidyseurat")
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  devtools::install_github("stemangiola/tidyseurat")
 
 ## -----------------------------------------------------------------------------
@@ -61,13 +61,13 @@ my_theme <-
 
 ## ----plot1--------------------------------------------------------------------
 pbmc_small %>%
-  tidyseurat::ggplot(aes(nFeature_RNA, fill = groups)) +
+  ggplot(aes(nFeature_RNA, fill = groups)) +
   geom_histogram() +
   my_theme
 
 ## ----plot2--------------------------------------------------------------------
 pbmc_small %>%
-  tidyseurat::ggplot(aes(groups, nCount_RNA, fill = groups)) +
+  ggplot(aes(groups, nCount_RNA, fill = groups)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(width = 0.1) +
   my_theme
@@ -107,7 +107,7 @@ pbmc_small_cluster
 
 ## ----cluster count------------------------------------------------------------
 pbmc_small_cluster %>%
-  tidyseurat::count(groups, seurat_clusters)
+  count(groups, seurat_clusters)
 
 ## ----markers_v3, eval=(packageVersion("Seurat") < package_version("4.0.0"))----
 #  # Identify top 10 markers per cluster
@@ -173,7 +173,7 @@ pbmc_small_cluster %>%
 #    as_tibble(rownames = "cell") %>%
 #    select(cell, first.labels)
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  # Join UMAP and cell type info
 #  pbmc_small_cell_type <-
 #    pbmc_small_UMAP %>%
@@ -183,7 +183,7 @@ pbmc_small_cluster %>%
 #  pbmc_small_cell_type %>%
 #    tidyseurat::select(cell, first.labels, everything())
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  pbmc_small_cell_type %>%
 #    count(seurat_clusters, first.labels)
 
@@ -256,9 +256,9 @@ pbmc_small_cluster %>%
 #    facet_wrap(~cell_class) +
 #    my_theme
 
-## -----------------------------------------------------------------------------
-pbmc_small %>%
-  aggregate_cells(groups, assays = "RNA")
+## ----eval=FALSE---------------------------------------------------------------
+#  pbmc_small %>%
+#    aggregate_cells(groups, assays = "RNA")
 
 ## -----------------------------------------------------------------------------
 sessionInfo()
