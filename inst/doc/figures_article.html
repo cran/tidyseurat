@@ -144,7 +144,7 @@ table, .body h2 { border-bottom: 1px solid #666; }
 <div class="frontmatter">
 <div class="title"><h1>Code for producing the figures in the article</h1></div>
 <div class="author"><h2>Stefano Mangiola</h2></div>
-<div class="date"><h3>2023-10-01</h3></div>
+<div class="date"><h3>2023-11-28</h3></div>
 </div>
 <div class="body">
 <!-- badges: start -->
@@ -267,7 +267,7 @@ p4 =
 </code></pre>
 <pre><code class="language-r">p6 = 
   PBMC_clean_scaled_UMAP_cluster_cell_type %&gt;%
-  tidyseurat::unite(&quot;cluster_cell_type&quot;, c(first.labels, seurat_clusters), remove=FALSE) %&gt;%
+  unite(&quot;cluster_cell_type&quot;, c(first.labels, seurat_clusters), remove=FALSE) %&gt;%
   pivot_longer(
     c(seurat_clusters, first.labels_single),
     names_to = &quot;classification&quot;, values_to = &quot;value&quot;

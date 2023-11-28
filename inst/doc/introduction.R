@@ -181,7 +181,7 @@ pbmc_small_cluster %>%
 #  
 #  # Reorder columns
 #  pbmc_small_cell_type %>%
-#    tidyseurat::select(cell, first.labels, everything())
+#    select(cell, first.labels, everything())
 
 ## ----eval=FALSE---------------------------------------------------------------
 #  pbmc_small_cell_type %>%
