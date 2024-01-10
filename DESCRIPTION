@@ -1,7 +1,7 @@
 Type: Package
 Package: tidyseurat
 Title: Brings Seurat to the Tidyverse
-Version: 0.7.9
+Version: 0.8.0
 Authors@R: c(person("Stefano", "Mangiola", email = "mangiolastefano@gmail.com",
                   role = c("aut", "cre")),
             person("Maria", "Doyle", email = "Maria.Doyle@petermac.org",
@@ -27,9 +27,9 @@ RoxygenNote: 7.2.3
 URL: https://github.com/stemangiola/tidyseurat
 BugReports: https://github.com/stemangiola/tidyseurat/issues
 NeedsCompilation: no
-Packaged: 2023-11-28 01:06:25 UTC; mangiola.s
+Packaged: 2024-01-09 23:19:30 UTC; mangiola.s
 Author: Stefano Mangiola [aut, cre],
   Maria Doyle [ctb]
 Maintainer: Stefano Mangiola <mangiolastefano@gmail.com>
 Repository: CRAN
-Date/Publication: 2023-11-28 03:20:02 UTC
+Date/Publication: 2024-01-10 04:50:02 UTC

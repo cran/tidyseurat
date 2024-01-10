@@ -1,8 +1,8 @@
-f1537017e3bb32c41797161f0fb4151b *DESCRIPTION
-b9d5338969995bfb3a7341f75c90d1d9 *NAMESPACE
+d721f7702c6e1c833215c6ae3971ac18 *DESCRIPTION
+a1036b0463897baa23c00c6b0bdba918 *NAMESPACE
 b8f511ef753373bb73b6ecf35dbb4df1 *R/attach.R
 c50316194f133d87f21b19745a2977c9 *R/data.R
-e73e1ff0bfcefa8a47ff6b74d0a21293 *R/dplyr_methods.R
+ada0bd3841de52b885fcdb1210c78129 *R/dplyr_methods.R
 0da0466ce2be458c3e036b2a6b436dc6 *R/ggplot2_methods.R
 faefd8c1e93fb7f11a43bbb914511652 *R/methods.R
 d032bbd6002f9fa74f69f2fffdd6ddc6 *R/methods_DEPRECATED.R
@@ -15,8 +15,8 @@ d2c91edee94b03e966246e5ad7808dd4 *R/tibble_methods.R
 de173a61b581b5aeba0af0f0dca2fec7 *R/utils-pipe.R
 7648624dfc36113256bdb8aa9c877458 *R/zzz.R
 1d960a1e507e058d1e7d0366ab55dae8 *README.md
-e73fa4aef4db14790c2b3d935f687fc1 *build/stage23.rdb
-e81d291050f68b347098946f3f46b277 *build/tidyseurat.pdf
+9f4e8ea230ebd689494166928283cdb4 *build/stage23.rdb
+947a0eec39df04606138e366046b4de9 *build/tidyseurat.pdf
 545647c670d60ed626eb4e7b60b74d32 *build/vignette.rds
 c3867d675815d81fb55cb14b03e6ee3f *data/cell_type_df.rda
 83cae735aa29ed09b648bdc7a65d8ce8 *data/pbmc_small_nested_interactions.rda
@@ -25,10 +25,10 @@ aad5d6a7838f15b3650a351dfabeb9ac *inst/NEWS.rd
 e7e89653515383f26dfd4f7ecde38c25 *inst/Thumbs.db
 af591d4cd7a64f87d2f0c186e0dbd9ad *inst/doc/figures_article.R
 4e59a1d238c773f10d461e6f07eec2fa *inst/doc/figures_article.Rmd
-a0f0847dc5d88bbe4cb5962040217b4e *inst/doc/figures_article.html
+498d35e71d9a1e4eeb311d8c9b84f54c *inst/doc/figures_article.html
 a40095a7cb69ecba88acc3ac96da75d3 *inst/doc/introduction.R
 010acf607f31b7c3393730ecc2c3f3a8 *inst/doc/introduction.Rmd
-d5ef1c8d2ffab6546f6a3405019717d6 *inst/doc/introduction.html
+8a65a4c2eae26579fbb8a6319c6e6582 *inst/doc/introduction.html
 8e304ce15dba94262400d4fd29ee79c1 *inst/logo.png
 6d91b871dfa03a9bdb33422a8b81786b *inst/logo.svg
 8df7608a2e7bb0580e0157acb2578452 *inst/logo_source_no_outline.svg
@@ -80,6 +80,7 @@ d85d9bf32e7e05325ed82441061e305b *man/fragments/intro_files/figure-html/unnamed-
 0df0e1d114f9632efd1ef9ea5549c3e2 *man/ggplot.Rd
 afa726e45cce1f627351bdcb55d9f128 *man/glimpse.Rd
 cbaa5983825a90556b9cd14948a84de8 *man/group_by.Rd
+1ab4030478360c632319edb387c1a347 *man/group_split.Rd
 8f315e79a44f6448e9894e88e1dd4959 *man/inner_join.Rd
 55c189022b4deec92d6272dc51096d83 *man/join_features.Rd
 382d260b688c4da03ee47dd8a0611edd *man/join_transcripts.Rd
@@ -99,7 +100,7 @@ be95d94da39167bf3ea04e3101d05b6b *man/rowwise.Rd
 351507809b499eac3c6674f75a27d6e9 *man/sample_n.Rd
 519c4e66f7c2fc6d714522f3ebac8e34 *man/select.Rd
 dccd517857dd69ed339d266c7aeea8bc *man/separate.Rd
-c759ca984f6db09a35b4bd3a7c2ed7af *man/slice.Rd
+66de84b740e7206692badfa6a4bc1163 *man/slice.Rd
 0db151016b2eb0bc187c2de2ac56b9af *man/summarise.Rd
 1ade20216af778e9251ee6ea4132fd1f *man/tbl_format_header.Rd
 4ce712f7260e54ab6a902ba599d36562 *man/tidy.Rd
@@ -107,7 +108,7 @@ fc2c403853cfabcba24bfe4f89cee70e *man/unite.Rd
 3549a3deee0df867f6011369ae3940e6 *man/unnest.Rd
 97ca12dab87ba08c33c420fa90a7700f *tests/testthat.R
 c740ccc208aff38be4d3b94ace491de8 *tests/testthat/Rplots.pdf
-cf7e732faa5fc1b122afcb23315d0076 *tests/testthat/test-dplyr.R
+a22564f025e75c62ac67f9d26d667cd6 *tests/testthat/test-dplyr.R
 9fa14b3418ca7c9b4a32ffd49188c638 *tests/testthat/test-ggplotly_methods.R
 ae3d1100ca974a5adb842c722b96790f *tests/testthat/test-methods.R
 5cfd4b1f3aeb3452f223a7d83ed066ad *tests/testthat/test-pillar.R
