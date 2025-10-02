@@ -12,10 +12,10 @@ library(knitr)
 knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  install.packages("tidyseurat")
+# install.packages("tidyseurat")
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  devtools::install_github("stemangiola/tidyseurat")
+# devtools::install_github("stemangiola/tidyseurat")
 
 ## -----------------------------------------------------------------------------
 library(dplyr)
@@ -110,155 +110,155 @@ pbmc_small_cluster %>%
   count(groups, seurat_clusters)
 
 ## ----markers_v3, eval=(packageVersion("Seurat") < package_version("4.0.0"))----
-#  # Identify top 10 markers per cluster
-#  markers <-
-#    pbmc_small_cluster %>%
-#    mutate(orig.ident = seurat_clusters) %>%
-#    FindAllMarkers(only.pos = TRUE) %>%
-#    group_by(cluster) %>%
-#    top_n(10, avg_logFC)
-#  
-#  # Plot heatmap
-#  pbmc_small_cluster %>%
-#    DoHeatmap(
-#      features = markers$gene,
-#      group.colors = friendly_cols
-#    )
+# # Identify top 10 markers per cluster
+# markers <-
+#   pbmc_small_cluster %>%
+#   mutate(orig.ident = seurat_clusters) %>%
+#   FindAllMarkers(only.pos = TRUE) %>%
+#   group_by(cluster) %>%
+#   top_n(10, avg_logFC)
+# 
+# # Plot heatmap
+# pbmc_small_cluster %>%
+#   DoHeatmap(
+#     features = markers$gene,
+#     group.colors = friendly_cols
+#   )
 
 ## ----markers_v4, eval=FALSE---------------------------------------------------
-#  # Identify top 10 markers per cluster
-#  markers <-
-#    pbmc_small_cluster %>%
-#    FindAllMarkers(only.pos = TRUE, min.pct = 0.25, thresh.use = 0.25) %>%
-#    group_by(cluster) %>%
-#    top_n(10, avg_log2FC)
-#  
-#  # Plot heatmap
-#  pbmc_small_cluster %>%
-#    DoHeatmap(
-#      features = markers$gene,
-#      group.colors = friendly_cols
-#    )
+# # Identify top 10 markers per cluster
+# markers <-
+#   pbmc_small_cluster %>%
+#   FindAllMarkers(only.pos = TRUE, min.pct = 0.25, thresh.use = 0.25) %>%
+#   group_by(cluster) %>%
+#   top_n(10, avg_log2FC)
+# 
+# # Plot heatmap
+# pbmc_small_cluster %>%
+#   DoHeatmap(
+#     features = markers$gene,
+#     group.colors = friendly_cols
+#   )
 
 ## ----umap, eval=FALSE---------------------------------------------------------
-#  pbmc_small_UMAP <-
-#    pbmc_small_cluster %>%
-#    RunUMAP(reduction = "pca", dims = 1:15, n.components = 3L)
+# pbmc_small_UMAP <-
+#   pbmc_small_cluster %>%
+#   RunUMAP(reduction = "pca", dims = 1:15, n.components = 3L)
 
 ## ----umap plot, eval=FALSE----------------------------------------------------
-#  pbmc_small_UMAP %>%
-#    plot_ly(
-#      x = ~`UMAP_1`,
-#      y = ~`UMAP_2`,
-#      z = ~`UMAP_3`,
-#      color = ~seurat_clusters,
-#      colors = friendly_cols[1:4]
-#    )
+# pbmc_small_UMAP %>%
+#   plot_ly(
+#     x = ~`UMAP_1`,
+#     y = ~`UMAP_2`,
+#     z = ~`UMAP_3`,
+#     color = ~seurat_clusters,
+#     colors = friendly_cols[1:4]
+#   )
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  # Get cell type reference data
-#  blueprint <- celldex::BlueprintEncodeData()
-#  
-#  # Infer cell identities
-#  cell_type_df <-
-#    GetAssayData(pbmc_small_UMAP, slot = 'counts', assay = "SCT") %>%
-#    log1p() %>%
-#    Matrix::Matrix(sparse = TRUE) %>%
-#    SingleR::SingleR(
-#      ref = blueprint,
-#      labels = blueprint$label.main,
-#      method = "single"
-#    ) %>%
-#    as.data.frame() %>%
-#    as_tibble(rownames = "cell") %>%
-#    select(cell, first.labels)
+# # Get cell type reference data
+# blueprint <- celldex::BlueprintEncodeData()
+# 
+# # Infer cell identities
+# cell_type_df <-
+#   GetAssayData(pbmc_small_UMAP, slot = 'counts', assay = "SCT") %>%
+#   log1p() %>%
+#   Matrix::Matrix(sparse = TRUE) %>%
+#   SingleR::SingleR(
+#     ref = blueprint,
+#     labels = blueprint$label.main,
+#     method = "single"
+#   ) %>%
+#   as.data.frame() %>%
+#   as_tibble(rownames = "cell") %>%
+#   select(cell, first.labels)
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  # Join UMAP and cell type info
-#  pbmc_small_cell_type <-
-#    pbmc_small_UMAP %>%
-#    left_join(cell_type_df, by = "cell")
-#  
-#  # Reorder columns
-#  pbmc_small_cell_type %>%
-#    select(cell, first.labels, everything())
+# # Join UMAP and cell type info
+# pbmc_small_cell_type <-
+#   pbmc_small_UMAP %>%
+#   left_join(cell_type_df, by = "cell")
+# 
+# # Reorder columns
+# pbmc_small_cell_type %>%
+#   select(cell, first.labels, everything())
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  pbmc_small_cell_type %>%
-#    count(seurat_clusters, first.labels)
+# pbmc_small_cell_type %>%
+#   count(seurat_clusters, first.labels)
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  pbmc_small_cell_type %>%
-#  
-#    # Reshape and add classifier column
-#    pivot_longer(
-#      cols = c(seurat_clusters, first.labels),
-#      names_to = "classifier", values_to = "label"
-#    ) %>%
-#  
-#    # UMAP plots for cell type and cluster
-#    ggplot(aes(UMAP_1, UMAP_2, color = label)) +
-#    geom_point() +
-#    facet_wrap(~classifier) +
-#    my_theme
+# pbmc_small_cell_type %>%
+# 
+#   # Reshape and add classifier column
+#   pivot_longer(
+#     cols = c(seurat_clusters, first.labels),
+#     names_to = "classifier", values_to = "label"
+#   ) %>%
+# 
+#   # UMAP plots for cell type and cluster
+#   ggplot(aes(UMAP_1, UMAP_2, color = label)) +
+#   geom_point() +
+#   facet_wrap(~classifier) +
+#   my_theme
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  pbmc_small_cell_type %>%
-#  
-#    # Add some mitochondrial abundance values
-#    mutate(mitochondrial = rnorm(n())) %>%
-#  
-#    # Plot correlation
-#    join_features(features = c("CST3", "LYZ"), shape = "wide") %>%
-#    ggplot(aes(CST3 + 1, LYZ + 1, color = groups, size = mitochondrial)) +
-#    geom_point() +
-#    facet_wrap(~first.labels, scales = "free") +
-#    scale_x_log10() +
-#    scale_y_log10() +
-#    my_theme
+# pbmc_small_cell_type %>%
+# 
+#   # Add some mitochondrial abundance values
+#   mutate(mitochondrial = rnorm(n())) %>%
+# 
+#   # Plot correlation
+#   join_features(features = c("CST3", "LYZ"), shape = "wide") %>%
+#   ggplot(aes(CST3 + 1, LYZ + 1, color = groups, size = mitochondrial)) +
+#   geom_point() +
+#   facet_wrap(~first.labels, scales = "free") +
+#   scale_x_log10() +
+#   scale_y_log10() +
+#   my_theme
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  pbmc_small_nested <-
-#    pbmc_small_cell_type %>%
-#    filter(first.labels != "Erythrocytes") %>%
-#    mutate(cell_class = if_else(`first.labels` %in% c("Macrophages", "Monocytes"), "myeloid", "lymphoid")) %>%
-#    nest(data = -cell_class)
-#  
-#  pbmc_small_nested
+# pbmc_small_nested <-
+#   pbmc_small_cell_type %>%
+#   filter(first.labels != "Erythrocytes") %>%
+#   mutate(cell_class = if_else(`first.labels` %in% c("Macrophages", "Monocytes"), "myeloid", "lymphoid")) %>%
+#   nest(data = -cell_class)
+# 
+# pbmc_small_nested
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  pbmc_small_nested_reanalysed <-
-#    pbmc_small_nested %>%
-#    mutate(data = map(
-#      data, ~ .x %>%
-#        FindVariableFeatures(verbose = FALSE) %>%
-#        RunPCA(npcs = 10, verbose = FALSE) %>%
-#        FindNeighbors(verbose = FALSE) %>%
-#        FindClusters(method = "igraph", verbose = FALSE) %>%
-#        RunUMAP(reduction = "pca", dims = 1:10, n.components = 3L, verbose = FALSE)
-#    ))
-#  
-#  pbmc_small_nested_reanalysed
+# pbmc_small_nested_reanalysed <-
+#   pbmc_small_nested %>%
+#   mutate(data = map(
+#     data, ~ .x %>%
+#       FindVariableFeatures(verbose = FALSE) %>%
+#       RunPCA(npcs = 10, verbose = FALSE) %>%
+#       FindNeighbors(verbose = FALSE) %>%
+#       FindClusters(method = "igraph", verbose = FALSE) %>%
+#       RunUMAP(reduction = "pca", dims = 1:10, n.components = 3L, verbose = FALSE)
+#   ))
+# 
+# pbmc_small_nested_reanalysed
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  pbmc_small_nested_reanalysed %>%
-#  
-#    # Convert to tibble otherwise Seurat drops reduced dimensions when unifying data sets.
-#    mutate(data = map(data, ~ .x %>% as_tibble())) %>%
-#    unnest(data) %>%
-#  
-#    # Define unique clusters
-#    unite("cluster", c(cell_class, seurat_clusters), remove = FALSE) %>%
-#  
-#    # Plotting
-#    ggplot(aes(UMAP_1, UMAP_2, color = cluster)) +
-#    geom_point() +
-#    facet_wrap(~cell_class) +
-#    my_theme
+# pbmc_small_nested_reanalysed %>%
+# 
+#   # Convert to tibble otherwise Seurat drops reduced dimensions when unifying data sets.
+#   mutate(data = map(data, ~ .x %>% as_tibble())) %>%
+#   unnest(data) %>%
+# 
+#   # Define unique clusters
+#   unite("cluster", c(cell_class, seurat_clusters), remove = FALSE) %>%
+# 
+#   # Plotting
+#   ggplot(aes(UMAP_1, UMAP_2, color = cluster)) +
+#   geom_point() +
+#   facet_wrap(~cell_class) +
+#   my_theme
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  pbmc_small %>%
-#    aggregate_cells(groups, assays = "RNA")
+# pbmc_small %>%
+#   aggregate_cells(groups, assays = "RNA")
 
 ## -----------------------------------------------------------------------------
 sessionInfo()
