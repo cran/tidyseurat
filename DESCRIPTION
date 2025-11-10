@@ -1,7 +1,7 @@
 Type: Package
 Package: tidyseurat
 Title: Brings Seurat to the Tidyverse
-Version: 0.8.4
+Version: 0.8.7
 Authors@R: c(person("Stefano", "Mangiola", email = "mangiolastefano@gmail.com",
                   role = c("aut", "cre")),
             person("Maria", "Doyle", email = "Maria.Doyle@petermac.org",
@@ -14,7 +14,7 @@ Depends: R (>= 4.1.0), ttservice (>= 0.3.8), SeuratObject
 Imports: Seurat (>= 4.3.0), tibble, dplyr (>= 1.1.4), magrittr, tidyr
         (>= 1.2.0), ggplot2, rlang (>= 1.0.0), purrr, lifecycle,
         methods, plotly, tidyselect, utils, vctrs, pillar, stringr,
-        cli, fansi, Matrix
+        cli, fansi, Matrix, generics
 Suggests: testthat, knitr, GGally, markdown, rbibutils
 VignetteBuilder: knitr
 RdMacros: lifecycle
@@ -29,9 +29,9 @@ URL: https://github.com/stemangiola/tidyseurat,
         https://stemangiola.github.io/tidyseurat/
 BugReports: https://github.com/stemangiola/tidyseurat/issues
 NeedsCompilation: no
-Packaged: 2025-10-02 03:58:25 UTC; a1234450
+Packaged: 2025-11-09 23:54:48 UTC; a1234450
 Author: Stefano Mangiola [aut, cre],
   Maria Doyle [ctb]
 Maintainer: Stefano Mangiola <mangiolastefano@gmail.com>
 Repository: CRAN
-Date/Publication: 2025-10-02 05:50:02 UTC
+Date/Publication: 2025-11-10 00:20:02 UTC

@@ -3,23 +3,18 @@
 \name{tidy}
 \alias{tidy}
 \alias{tidy.Seurat}
-\title{tidy for `Seurat`}
+\title{tidy for Seurat objects}
 \usage{
-tidy(object)
-
-\method{tidy}{Seurat}(object)
+\method{tidy}{Seurat}(x, ...)
 }
 \arguments{
-\item{object}{A `Seurat` object.}
+\item{x}{A Seurat object}
+
+\item{...}{Additional arguments (not used)}
 }
 \value{
-A `tidyseurat` object.
+A tidyseurat object
 }
 \description{
-tidy for `Seurat`
-}
-\examples{
-data(pbmc_small)
-pbmc_small
-
+tidy for Seurat objects
 }

@@ -15,26 +15,17 @@ setMethod(
 
 setClass("tidyseurat", contains="Seurat")
 
-#' @name tidy
-#' @rdname tidy
-#' @title tidy for `Seurat`
-#'
-#' @param object A `Seurat` object.
-#' @return A `tidyseurat` object.
-#'
-#' @examples
-#' data(pbmc_small)
-#' pbmc_small
-#'
-#' @export
-tidy <- function(object) {
-    UseMethod("tidy", object)
-}
+#' @importFrom generics tidy
 
-#' @rdname tidy
+#' @title tidy for Seurat objects
+#' @name tidy
+#' @description tidy for Seurat objects
+#' @param x A Seurat object
+#' @param ... Additional arguments (not used)
+#' @return A tidyseurat object
 #' @importFrom lifecycle deprecate_warn
 #' @export
-tidy.Seurat <- function(object){ 
+tidy.Seurat <- function(x, ...){ 
   
     # DEPRECATE
     deprecate_warn(
@@ -43,7 +34,7 @@ tidy.Seurat <- function(object){
         details="tidyseurat says: tidy() is not needed anymore."
     )
   
-    return(object)
+    return(x)
 }
 
 
@@ -71,7 +62,7 @@ tidy.Seurat <- function(object){
 #' @importFrom ttservice join_features
 #' @export
 setMethod("join_features", "Seurat", function(.data,
-    features=NULL, all=FALSE, exclude_zeros=FALSE, shape="long",
+    features=NULL, all=FALSE, exclude_zeros=FALSE, shape="wide",
     assay=NULL, slot="data", ...) {
   
   .feature = NULL
@@ -129,7 +120,6 @@ setMethod("join_features", "Seurat", function(.data,
 #' @importFrom Seurat DietSeurat
 #' @importFrom Seurat GetAssayData
 #' @importFrom purrr map_int
-#' @export
 setMethod("aggregate_cells", "Seurat",  function(.data,
     .sample=NULL, slot="data", assays=NULL,
     aggregation_function=Matrix::rowSums, ...){

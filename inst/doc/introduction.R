@@ -74,7 +74,7 @@ pbmc_small %>%
 
 ## -----------------------------------------------------------------------------
 pbmc_small %>%
-  join_features(features = c("HLA-DRA", "LYZ")) %>%
+  join_features(features = c("HLA-DRA", "LYZ"), shape = "long") %>%
   ggplot(aes(groups, .abundance_RNA + 1, fill = groups)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(aes(size = nCount_RNA), alpha = 0.5, width = 0.2) +
