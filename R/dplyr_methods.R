@@ -885,10 +885,40 @@ sample_frac.Seurat <- function(tbl, size=1, replace=FALSE,
     }
 }
 
+#' Count observations by group
+#'
+#' @description
+#' `count()` lets you quickly count the unique values of one or more variables:
+#' `df %>% count(a, b)` is roughly equivalent to
+#' `df %>% group_by(a, b) %>% summarise(n = n())`.
+#' `count()` is paired with `tally()`, a lower-level helper that is equivalent
+#' to `df %>% summarise(n = n())`. Supply `wt` to perform weighted counts,
+#' switching the summary from `n = n()` to `n = sum(wt)`.
+#'
+#' `add_count()` and `add_tally()` are equivalents to `count()` and `tally()`
+#' but use `mutate()` instead of `summarise()` so that they add a new column
+#' with group-wise counts.
+#'
+#' @param x A data frame, data frame extension (e.g. a tibble), or a
+#'   lazy data frame (e.g. from dbplyr or dtplyr).
+#' @param ... <[`data-masking`][dplyr_data_masking]> Variables to group by.
+#' @param wt <[`data-masking`][dplyr_data_masking]> Frequency weights.
+#'   Can be `NULL` or a variable:
+#'
+#'   * If `NULL` (the default), counts the number of rows in each group.
+#'   * If a variable, computes `sum(wt)` for each group.
+#' @param sort If `TRUE`, will show the largest groups at the top.
+#' @param name The name of the new column in the output.
+#'
+#'   If omitted, it will default to `n`. If there's already a column called `n`,
+#'   it will error, and require you to specify the name.
+#' @param .drop For `count()`: if `FALSE` will include counts for empty groups
+#'   (i.e. for levels of factors that don't exist in the data).
+#' @return
+#' An object of the same type as `.data`. `count()` and `add_count()`
+#' group transiently, so the output has the same groups as the input.
 #' @name count
 #' @rdname count
-#' @inherit dplyr::count
-#' 
 #' @examples
 #' data(pbmc_small)
 #' pbmc_small |> count(groups)
@@ -910,29 +940,48 @@ count.Seurat <- function(x, ..., wt=NULL, sort=FALSE,
 
     x %>%
         as_tibble() %>%
-        dplyr::count(  ..., wt=!!enquo(wt), sort=sort, name=name, .drop=.drop)
+        dplyr::count(..., wt=!!enquo(wt), sort=sort, name=name, .drop=.drop)
+}
+
+#' @export
+#' @rdname count
+add_count <- function(x, ..., wt=NULL, sort=FALSE, name=NULL) {
+    UseMethod("add_count")
+}
+
+#' @export
+#' @rdname count
+add_count.default <- function(x, ..., wt=NULL, sort=FALSE, name=NULL) {
+    if (is.null(name)) name <- "n"
+    .out <- x %>%
+        dplyr::group_by(..., .add = TRUE) %>%
+        dplyr::mutate(!!rlang::sym(name) := if (is.null(wt)) dplyr::n() else sum(!!enquo(wt), na.rm = TRUE)) %>%
+        dplyr::ungroup()
+    if (sort) .out <- dplyr::arrange(.out, dplyr::desc(!!rlang::sym(name)))
+    .out
 }
 
 #' @rdname count
 #' @aliases add_count
-#' @importFrom dplyr add_count
+#' @importFrom rlang sym
 #' @export
-add_count.Seurat <- function(x, ..., wt=NULL,
-    sort=FALSE, name=NULL, .drop=group_by_drop_default(x)) {
+add_count.Seurat <- function(x, ..., wt=NULL, sort=FALSE, name=NULL) {
 
     # Deprecation of special column names
-    .cols <- enquos(..., .ignore_empty="all") %>% 
+    .cols <- enquos(..., .ignore_empty="all") %>%
         map(~ quo_name(.x)) %>% unlist()
     if (is_sample_feature_deprecated_used(x, .cols)) {
         x <- ping_old_special_column_into_metadata(x)
     }
 
-    x@meta.data <-
-        x %>%
+    if (is.null(name)) name <- "n"
+    .out <- x %>%
         as_tibble %>%
-        dplyr::add_count(..., wt=!!enquo(wt), sort=sort,
-            name=name, .drop=.drop) %>%
-        as_meta_data(x)
+        dplyr::group_by(..., .add = TRUE) %>%
+        dplyr::mutate(!!sym(name) := if (is.null(wt)) dplyr::n() else sum(!!enquo(wt), na.rm = TRUE)) %>%
+        dplyr::ungroup()
+    if (sort) .out <- dplyr::arrange(.out, dplyr::desc(!!sym(name)))
+    x@meta.data <- .out %>% as_meta_data(x)
 
     x
 }

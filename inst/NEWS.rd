@@ -1,6 +1,17 @@
 \name{NEWS}
 \title{News for Package \pkg{tidyseurat}}
 
+\section{Changes in version 0.8.9}{
+\itemize{
+    \item CRAN fix: \code{add_count()} now uses \code{count(..., .add = TRUE)} instead of \code{dplyr::add_count()}, avoiding the defunct \code{.drop} argument (dplyr 1.0.0+).
+}}
+
+\section{Changes in version 0.8.8}{
+\itemize{
+    \item Removed deprecated \code{.drop} argument from \code{add_count.Seurat()} to align with dplyr's API changes
+    \item Added generic methods for \code{add_count()} including a default method
+}}
+
 \section{Changes in version 0.5.1, Development}{
 \itemize{
     \item Change default shape parameter in join_features() and join_transcripts() from "long" to "wide", resulting in a return type of Seurat by default
